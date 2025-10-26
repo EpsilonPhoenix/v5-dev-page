@@ -1,5 +1,7 @@
+'use client'
+
 import { team, getDiscordAvatarUrl } from '@/data/team';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 export default function Home() {
   const developers = useMemo(() => team.filter((m) => m.role === 'Developer'), []);
@@ -26,11 +28,35 @@ export default function Home() {
         : 'text-fuchsia-700 dark:text-fuchsia-300',
     };
   };
-
-  const Card = (member: (typeof team)[number]) => {
-    const t = roleTokens(member.role);
+  const Card = ({ member }: { member: (typeof team)[number] }) => {
+    const isDev = member.role === 'Developer';
+    const t = {
+      overlay: isDev
+        ? 'bg-gradient-to-br from-blue-500/30 via-indigo-500/20 to-transparent'
+        : 'bg-gradient-to-br from-fuchsia-500/30 via-violet-500/20 to-transparent',
+      ring: isDev
+        ? 'ring-blue-500/30 dark:ring-blue-400/30'
+        : 'ring-fuchsia-500/30 dark:ring-fuchsia-400/30',
+      auraHover: isDev ? 'group-hover:bg-blue-500/20' : 'group-hover:bg-fuchsia-500/20',
+      chipBorder: isDev
+        ? 'border-blue-500/20 dark:border-blue-400/20'
+        : 'border-fuchsia-500/20 dark:border-fuchsia-400/20',
+      chipBg: isDev
+        ? 'bg-blue-500/10 dark:bg-blue-400/10'
+        : 'bg-fuchsia-500/10 dark:bg-fuchsia-400/10',
+      chipText: isDev
+        ? 'text-blue-700 dark:text-blue-300'
+        : 'text-fuchsia-700 dark:text-fuchsia-300',
+    };
+  
+    const isAnimated = member.avatarHash?.startsWith('a_');
+    const base = `https://cdn.discordapp.com/avatars/${member.userId}/${member.avatarHash}`;
+    const staticUrl = `${base}.png?size=256`;
+    const animatedUrl = isAnimated ? `${base}.gif?size=256` : staticUrl;
+    const [src, setSrc] = useState(staticUrl);
+  
     return (
-      <div key={member.userId} className="group relative">
+      <div className="group relative">
         <div
           aria-hidden
           className={`absolute -inset-px rounded-2xl ${t.overlay} opacity-0 blur transition duration-500 group-hover:opacity-100`}
@@ -39,9 +65,14 @@ export default function Home() {
           <div className="flex flex-col items-center">
             <div className="relative">
               <img
-                src={getDiscordAvatarUrl(member.userId, member.avatarHash)}
+                src={src}
                 alt={member.name}
                 className={`h-28 w-28 rounded-full object-cover ring-2 ${t.ring} ring-offset-2 ring-offset-white transition duration-300 group-hover:scale-[1.02] dark:ring-offset-zinc-900`}
+                onMouseEnter={() => isAnimated && setSrc(animatedUrl)}
+                onMouseLeave={() => isAnimated && setSrc(staticUrl)}
+                onFocus={() => isAnimated && setSrc(animatedUrl)}
+                onBlur={() => isAnimated && setSrc(staticUrl)}
+                onError={() => setSrc(staticUrl)}
                 loading="lazy"
                 decoding="async"
               />
@@ -50,20 +81,20 @@ export default function Home() {
                 className={`pointer-events-none absolute -inset-1 -z-10 rounded-full bg-blue-500/0 blur-lg transition ${t.auraHover}`}
               />
             </div>
-
+    
             <h3 className="mt-4 text-xl font-semibold text-zinc-900 dark:text-zinc-50">
               {member.name}
             </h3>
-
+    
             <span
               className={`mt-2 inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium ${t.chipBorder} ${t.chipBg} ${t.chipText}`}
             >
               {member.role}
             </span>
           </div>
-
+    
           <div className="mt-6 h-px w-full bg-gradient-to-r from-transparent via-zinc-200/80 to-transparent dark:via-white/10" />
-
+    
           <div className="mt-4 flex justify-center">
             <span className="text-xs text-zinc-500 dark:text-zinc-400">
               {member.note}
@@ -112,8 +143,11 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {developers.map((m) => Card(m))}
+              {developers.map((m) => (
+                <Card key={m.userId} member={m} />
+              ))}
             </div>
+
           </div>
 
           {/* Contributors */}
@@ -132,7 +166,9 @@ export default function Home() {
               {Array.from({ length: padLeftLg }).map((_, i) => (
                 <div key={`pad-lg-${i}`} aria-hidden className="hidden lg:block" />
               ))}
-              {contributors.map((m) => Card(m))}
+              {contributors.map((m) => (
+                <Card key={m.userId} member={m} />
+              ))}
             </div>
           </div>
 
