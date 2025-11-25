@@ -1,8 +1,8 @@
 export const team = [
   {
     name: "EpsilonPhoenix",
-    userId: "899647076370092042",
-    avatarHash: "a_7bb74a7952c1eae2543c3cbb63160571",
+    userId: "1210804954856685598",
+    avatarHash: "fa0043c1c83ebb9da26c1cdbacb43218",
     role: "Developer",
     note: "Making shit prototypes",
   },
@@ -22,8 +22,8 @@ export const team = [
   },
   {
     name: "Nathan",
-    userId: "1367543367277219840",
-    avatarHash: "ef6a28b2f77cad9c3c7f32de5fadd73e",
+    userId: "1441859003708866601",
+    avatarHash: "46d66bb036a7198accd9c0437fa600e6",
     role: "Developer",
     note: "Made mixins and rendering!",
   },
