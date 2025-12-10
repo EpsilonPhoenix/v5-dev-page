@@ -142,7 +142,7 @@ export default function Home() {
               <div className="absolute right-[-6rem] top-[20%] h-[12rem] w-[12rem] rounded-full bg-blue-400/15 blur-2xl dark:bg-blue-400/10" />
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
               {developers.map((m) => (
                 <Card key={m.userId} member={m} />
               ))}
